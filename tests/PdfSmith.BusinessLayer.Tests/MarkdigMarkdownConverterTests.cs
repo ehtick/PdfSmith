@@ -43,7 +43,7 @@ public class MarkdigMarkdownConverterTests
     [InlineData(null)]
     public async Task IsMarkdownAsync_WithEmptyOrWhitespace_ReturnsFalse(string? content)
     {
-        var result = await converter.IsMarkdownAsync(content!);
+        var result = await converter.IsMarkdownAsync(content);
 
         Assert.False(result);
     }

@@ -14,21 +14,14 @@ public partial class MarkdigMarkdownConverter : IMarkdownConverter
         .Build();
 
     /// <inheritdoc />
-    public Task<bool> IsMarkdownAsync(string content)
+    public Task<bool> IsMarkdownAsync(string? content)
     {
         if (string.IsNullOrWhiteSpace(content))
         {
             return Task.FromResult(false);
         }
 
-        var trimmed = content.TrimStart();
-
-        if (HtmlBlockTagRegex.IsMatch(trimmed))
-        {
-            return Task.FromResult(false);
-        }
-
-        if (trimmed.StartsWith("<!DOCTYPE", StringComparison.OrdinalIgnoreCase))
+        if (HtmlBlockTagRegex.IsMatch(content))
         {
             return Task.FromResult(false);
         }
@@ -45,7 +38,7 @@ public partial class MarkdigMarkdownConverter : IMarkdownConverter
         return Task.FromResult(html);
     }
 
-    [GeneratedRegex(@"^\s*<(html|head|body|div|section|article|header|footer|nav|main|table|form|script|style|link|meta)\b", RegexOptions.IgnoreCase | RegexOptions.Multiline)]
+    [GeneratedRegex(@"\A\s*(<(html|head|body|div|section|article|header|footer|nav|main|table|form|script|style|link|meta)\b|<!DOCTYPE\b)", RegexOptions.IgnoreCase)]
     private static partial Regex HtmlBlockTagRegex { get; }
 
     // Matches common Markdown syntax: headings (# ), horizontal rules (*** or ---), unordered lists (-, *, +),
