@@ -34,7 +34,7 @@ public class TemplateServiceTests
         markdownConverter.ConvertToHtmlAsync(markdownContent).Returns(expectedHtml);
         timeZoneService.GetTimeZone().Returns(TimeZoneInfo.Utc);
 
-        var request = new TemplateGenerationRequest("# Hello World", null, "scriban");
+        var request = new TemplateGenerationRequest(markdownContent, null, "scriban");
 
         var result = await service.CreateAsync(request, CancellationToken.None);
 
@@ -53,7 +53,7 @@ public class TemplateServiceTests
         markdownConverter.IsMarkdownAsync(htmlContent).Returns(false);
         timeZoneService.GetTimeZone().Returns(TimeZoneInfo.Utc);
 
-        var request = new TemplateGenerationRequest("<html><body><h1>Hello</h1></body></html>", null, "scriban");
+        var request = new TemplateGenerationRequest(htmlContent, null, "scriban");
 
         var result = await service.CreateAsync(request, CancellationToken.None);
 
