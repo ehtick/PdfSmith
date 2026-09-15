@@ -204,29 +204,39 @@ Handlebars provides logic-less templates with a designer-friendly syntax, ideal 
 <html>
 <body>
     <h1>Hello {{Model.Name}}!</h1>
-    <p>Order Date: {{formatDate Model.Date "dd/MM/yyyy"}}</p>
+    <p>Order Date: {{[DateTime.Format] Model.Date "dd/MM/yyyy"}}</p>
     <ul>
     {{#each Model.Items}}
-        <li>{{Name}} - {{formatCurrency Price}}</li>
+        <li>{{Name}} - {{Format Price "C"}}</li>
     {{/each}}
     </ul>
-    <p>Total: {{formatCurrency Model.Total}}</p>
+    <p>Total: {{Format Model.Total "C"}}</p>
 </body>
 </html>
 ```
 
-**Built-in Helpers:**
+**Available Helpers:**
 
-- `formatNumber` - Formats number values as string using the specified format and the current culture
-- `formatCurrency` - Formats decimal values as currency using current culture
-- `formatDate` - Formats dates with optional format string
-- `now` - Gets the current datetime with optional format string
-- `utcNow` - Gets the current UTC datetime with optional format string
-- `add` - Adds two numeric values for calculations within templates
-- `subtract` - Subtracts two numeric values for calculations within templates
-- `multiply` - Multiplies two numeric values for calculations within templates
-- `divide` - Divides two numeric values for calculations within templates
-- `round` - Rounds a numberic value to the specified number of decimals
+The following helper categories from [Handlebars.Net.Helpers](https://github.com/Handlebars-Net/Handlebars.Net.Helpers/tree/master/src/Handlebars.Net.Helpers/Helpers) are enabled. Category prefixes are disabled, except for the `DateTime.*` helpers whose registered names explicitly include the category.
+
+- **Boolean:** `And`, `Equal`, `LogicalAnd`, `LogicalOr`, `LogicalXor`, `Not`, `NotEqual`, `Or`
+- **Date and time:** `Now`, `UtcNow`, `DateTime.Format`, `DateTime.Parse`, `DateTime.ParseExact`, `DateTime.Add`, `DateTime.AddYears`, `DateTime.AddMonths`, `DateTime.AddDays`, `DateTime.AddHours`, `DateTime.AddMinutes`, `DateTime.AddSeconds`, `DateTime.AddMilliseconds`, `DateTime.AddTicks`
+- **Math:** `Abs`, `Add`, `Avg`, `Ceiling`, `Divide`, `Equal`, `Floor`, `GreaterThan`, `GreaterThanEqual`, `LessThan`, `LessThanEqual`, `Max`, `Min`, `Minus`, `Modulo`, `Multiply`, `NotEqual`, `Plus`, `Power`, `Round`, `Sign`, `Sqrt`, `Subtract`, `Times`
+- **String:** `Append`, `Base64Decode`, `Base64Encode`, `Camelcase`, `Capitalize`, `Coalesce`, `Concat`, `Contains`, `Ellipsis`, `Equal`, `Equals`, `First`, `Format`, `FormatAsString`, `HtmlDecode`, `HtmlEncode`, `IsNotNullOrEmpty`, `IsNotNullOrWhiteSpace`, `IsNullOrEmpty`, `IsNullOrWhiteSpace`, `IsString`, `Join`, `Last`, `Lowercase`, `NotEqual`, `NotEquals`, `PadLeft`, `PadRight`, `Pascalcase`, `Prepend`, `Remove`, `Repeat`, `Replace`, `Reverse`, `Split`, `StartsWith`, `Substring`, `Titlecase`, `ToWrappedString`, `Trim`, `TrimEnd`, `TrimStart`, `Truncate`, `Uppercase`
+
+Helper names are case-insensitive. Use square brackets around names containing a dot, such as `[DateTime.Format]`.
+
+**Formatting Examples:**
+
+```handlebars
+Date: {{[DateTime.Format] Model.Date "dd/MM/yyyy"}}
+Current date: {{[DateTime.Format] (Now) "dd/MM/yyyy"}}
+Number rounded to two decimal places: {{Format Model.Value "N2"}}
+Currency: {{Format Model.Amount "C"}}
+```
+
+> [!NOTE]
+> `Round` rounds to the nearest integer. Use `Format` with `N2` to display a numeric value rounded to two decimal places. Helpers passed as arguments must use subexpression syntax, such as `(Now)`, and quoted values such as `"5.2"` are strings rather than numbers.
 
 > [!IMPORTANT]
 > For every template engine, model values must be referenced from the `Model` root object. Property names in template expressions are case-sensitive and must use PascalCase, even when the corresponding properties in the request's JSON `model` object use camelCase.
@@ -452,9 +462,9 @@ var handlebarsTemplate = """
     
     <div class="invoice-details">
         <p><strong>Customer:</strong> {{Model.CustomerName}}</p>
-        <p><strong>Date:</strong> {{formatDate Model.Date "dd/MM/yyyy"}}</p>
+        <p><strong>Date:</strong> {{[DateTime.Format] Model.Date "dd/MM/yyyy"}}</p>
     </div>
-    
+
     <table>
         <thead>
             <tr>
@@ -469,15 +479,15 @@ var handlebarsTemplate = """
             <tr>
                 <td>{{Name}}</td>
                 <td>{{Quantity}}</td>
-                <td>{{formatCurrency Price}}</td>
-                <td>{{formatCurrency (multiply Price Quantity)}}</td>
+                <td>{{Format Price "C"}}</td>
+                <td>{{Format (Multiply Price Quantity) "C"}}</td>
             </tr>
             {{/each}}
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="3" class="total">Total:</td>
-                <td class="total">{{formatCurrency Model.Total}}</td>
+                <td class="total">{{Format Model.Total "C"}}</td>
             </tr>
         </tfoot>
     </table>

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PdfSmith.BusinessLayer.Services;
 using PdfSmith.BusinessLayer.Services.Interfaces;
+using PdfSmith.BusinessLayer.Templating;
 using PdfSmith.BusinessLayer.Templating.Interfaces;
 using PdfSmith.Shared.Models;
 
@@ -60,5 +61,23 @@ public class TemplateServiceTests
         Assert.True(result.Success);
         Assert.Equal(htmlContent, result.Content!.Result);
         await markdownConverter.DidNotReceive().ConvertToHtmlAsync(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task HandlebarsRenderAsync_WithDifferentCultures_UsesRequestedCulture()
+    {
+        timeZoneService.GetTimeZone().Returns(TimeZoneInfo.Utc);
+        var engine = new HandlebarsTemplateEngine(new ClientTimeProvider(timeZoneService));
+        const string template = "{{Format Model.Amount \"C\"}}";
+        var model = new { Amount = 5.2 };
+        var italianCulture = CultureInfo.GetCultureInfo("it-IT");
+        var americanCulture = CultureInfo.GetCultureInfo("en-US");
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        var italianResult = await engine.RenderAsync(template, model, italianCulture, cancellationToken);
+        var americanResult = await engine.RenderAsync(template, model, americanCulture, cancellationToken);
+
+        Assert.Equal(5.2.ToString("C", italianCulture), italianResult);
+        Assert.Equal(5.2.ToString("C", americanCulture), americanResult);
     }
 }
