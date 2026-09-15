@@ -41,9 +41,9 @@ public class HandlebarsTemplateEngine(ClientTimeProvider requestTimeProvider) : 
             arguments.Length switch
             {
                 0 => string.Empty,
-                >= 2 when decimal.TryParse(arguments[0].ToString(), CultureInfo.CurrentCulture, out var value)
-                    => value.ToString(arguments[1].ToString(), CultureInfo.CurrentCulture),
-                >= 1 when decimal.TryParse(arguments[0].ToString(), CultureInfo.CurrentCulture, out var value)
+                >= 2 when decimal.TryParse(arguments[0]?.ToString(), CultureInfo.CurrentCulture, out var value)
+                    => value.ToString(arguments[1]?.ToString(), CultureInfo.CurrentCulture),
+                >= 1 when decimal.TryParse(arguments[0]?.ToString(), CultureInfo.CurrentCulture, out var value)
                     => value.ToString(CultureInfo.CurrentCulture),
                 _ => arguments[0]
             });
@@ -52,7 +52,7 @@ public class HandlebarsTemplateEngine(ClientTimeProvider requestTimeProvider) : 
             arguments.Length switch
             {
                 0 => string.Empty,
-                >= 1 when decimal.TryParse(arguments[0].ToString(), CultureInfo.CurrentCulture, out var value)
+                >= 1 when decimal.TryParse(arguments[0]?.ToString(), CultureInfo.CurrentCulture, out var value)
                     => value.ToString("C", CultureInfo.CurrentCulture),
                 _ => arguments.FirstOrDefault()?.ToString() ?? string.Empty
             });
@@ -78,7 +78,7 @@ public class HandlebarsTemplateEngine(ClientTimeProvider requestTimeProvider) : 
                 return dateTimeOffset.ToString(format, CultureInfo.CurrentCulture);
             }
 
-            if (DateTime.TryParse(dateValue.ToString(), CultureInfo.CurrentCulture, out var parsedDate))
+            if (DateTime.TryParse(dateValue?.ToString(), CultureInfo.CurrentCulture, out var parsedDate))
             {
                 return parsedDate.ToString(format, CultureInfo.CurrentCulture);
             }
@@ -114,7 +114,7 @@ public class HandlebarsTemplateEngine(ClientTimeProvider requestTimeProvider) : 
         handlebars.RegisterHelper("round", (context, arguments) =>
         {
             if (arguments.Length == 0 ||
-                !decimal.TryParse(arguments[0].ToString(), CultureInfo.CurrentCulture, out var value1))
+                !decimal.TryParse(arguments[0]?.ToString(), CultureInfo.CurrentCulture, out var value1))
             {
                 return string.Empty;
             }
@@ -122,7 +122,7 @@ public class HandlebarsTemplateEngine(ClientTimeProvider requestTimeProvider) : 
             var decimals = 0;
             if (arguments.Length >= 2)
             {
-                int.TryParse(arguments[1].ToString(), CultureInfo.CurrentCulture, out decimals);
+                int.TryParse(arguments[1]?.ToString(), CultureInfo.CurrentCulture, out decimals);
             }
 
             return Math.Round(value1, decimals, MidpointRounding.AwayFromZero);
@@ -139,8 +139,8 @@ public class HandlebarsTemplateEngine(ClientTimeProvider requestTimeProvider) : 
                 return false;
             }
 
-            if (decimal.TryParse(arguments[0].ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out value1) &&
-                decimal.TryParse(arguments[1].ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out value2))
+            if (decimal.TryParse(arguments[0]?.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out value1) &&
+                decimal.TryParse(arguments[1]?.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out value2))
             {
                 return true;
             }
