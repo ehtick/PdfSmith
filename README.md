@@ -206,7 +206,7 @@ Handlebars provides logic-less templates with a designer-friendly syntax, ideal 
     <h1>Hello {{Model.Name}}!</h1>
     <p>Order Date: {{formatDate Model.Date "dd/MM/yyyy"}}</p>
     <ul>
-    {{#each Items}}
+    {{#each Model.Items}}
         <li>{{Name}} - {{formatCurrency Price}}</li>
     {{/each}}
     </ul>
@@ -227,6 +227,9 @@ Handlebars provides logic-less templates with a designer-friendly syntax, ideal 
 - `multiply` - Multiplies two numeric values for calculations within templates
 - `divide` - Divides two numeric values for calculations within templates
 - `round` - Rounds a numberic value to the specified number of decimals
+
+> [!IMPORTANT]
+> For every template engine, model values must be referenced from the `Model` root object. Property names in template expressions are case-sensitive and must use PascalCase, even when the corresponding properties in the request's JSON `model` object use camelCase.
 
 ## 📝 Markdown Support
 
