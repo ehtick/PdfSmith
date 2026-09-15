@@ -7,6 +7,7 @@ using System.Threading.RateLimiting;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -247,7 +248,7 @@ app.MapPost("/api/pdf", async (PdfGenerationRequest request, IPdfService pdfServ
 .WithSummary("Renders a template and generates a PDF using the specified template engine")
 .WithDescription("Accepts a template (string) and a model (JSON) and returns a generated PDF document. Supports Razor, Scriban, and Handlebars via the 'templateEngine' property. The model is injected into the template for dynamic content rendering. Additional PDF options and a custom file name can be provided. The template is rendered using the request culture and optional time zone header.")
 .WithValidation<PdfGenerationRequest>()
-.Produces(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Pdf)
+.Produces<FileStreamHttpResult>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Pdf)
 .AddOpenApiOperationTransformer((operation, _, _) =>
 {
     if (operation.RequestBody?.Content?.TryGetValue(MediaTypeNames.Application.Json, out var mediaType) is true)

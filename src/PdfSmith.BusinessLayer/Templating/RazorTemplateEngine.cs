@@ -16,14 +16,14 @@ public partial class RazorTemplateEngine(IRazorLightEngine engine) : ITemplateEn
     {
         try
         {
-            var sanitizedTemplate = DateTimeNowRegex.Replace(template, "@requestTimeProvider.GetLocalNow().DateTime");
-            sanitizedTemplate = DateTimeOffsetNowRegex.Replace(sanitizedTemplate, "@requestTimeProvider.GetLocalNow()");
+            var sanitizedTemplate = DateTimeNowRegex.Replace(template, "@clientTimeProvider.GetLocalNow().DateTime");
+            sanitizedTemplate = DateTimeOffsetNowRegex.Replace(sanitizedTemplate, "@clientTimeProvider.GetLocalNow()");
 
             var content = $"""
                 @using System
                 @using System.Collections.Generic
                 @using System.Linq
-                @inject PdfSmith.BusinessLayer.Services.RequestTimeProvider requestTimeProvider
+                @inject PdfSmith.BusinessLayer.Services.ClientTimeProvider clientTimeProvider
                 {sanitizedTemplate}
                 """;
 
